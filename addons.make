@@ -3,5 +3,6 @@ ofxCv
 ofxDatGui
 ofxKinect
 ofxModal
+ofxNI2
 ofxParagraph
 ofxXmlSettings

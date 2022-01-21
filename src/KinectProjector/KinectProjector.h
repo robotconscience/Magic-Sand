@@ -28,7 +28,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxCv.h"
+#define USE_OPENNI
+
+#ifdef USE_OPENNI
+#include "NI2Grabber.h"
+#else
 #include "KinectGrabber.h"
+#endif
 #include "ofxModal.h"
 
 #include "KinectProjectorCalibration.h"
@@ -276,7 +282,11 @@ private:
     std::shared_ptr<ofAppBaseWindow> projWindow;
     
     //kinect grabber
-    KinectGrabber               kinectgrabber;
+#ifdef USE_OPENNI
+    NI2Grabber                  grabber;
+#else
+    KinectGrabber               grabber;
+#endif
     bool                        spatialFiltering;
     bool                        followBigChanges;
     int                         numAveragingSlots;

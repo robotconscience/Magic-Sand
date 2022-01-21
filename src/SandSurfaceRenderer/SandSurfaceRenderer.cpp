@@ -515,7 +515,7 @@ bool SandSurfaceRenderer::loadSettings(){
     colorMapFile = srs.getChild("colorMapFile").getValue<string>();
     drawContourLines = srs.getChild("drawContourLines").getValue<bool>();
     contourLineDistance = srs.getChild("contourLineDistance").getValue<float>();
-    
+    ofLogVerbose()<<colorMapFile<<":"<<drawContourLines<<":"<<contourLineDistance;
     return true;
 }
 
