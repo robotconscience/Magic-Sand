@@ -672,8 +672,9 @@ void KinectProjector::updateROIFromFile()
 	ofXml xml;
 	if (xml.load(settingsFile))
 	{
-		xml.setTo("KINECTSETTINGS");
-		kinectROI = xml.getValue<ofRectangle>("kinectROI");
+        auto kinectSettings = xml.find("KINECTSETTINGS");
+//		xml.setTo("KINECTSETTINGS");
+		kinectROI = kinectSettings.getChild("kinectROI").getValue<ofRectangle>();
 		setNewKinectROI();
 		ROICalibState = ROI_CALIBRATION_STATE_DONE;
 		return;
@@ -1856,20 +1857,20 @@ bool KinectProjector::loadSettings(){
     ofXml xml;
     if (!xml.load(settingsFile))
         return false;
-    xml.setTo("KINECTSETTINGS");
-    kinectROI = xml.getValue<ofRectangle>("kinectROI");
-    basePlaneNormalBack = xml.getValue<ofVec3f>("basePlaneNormalBack");
+    auto kinectSEttings = xml.find("KINECTSETTINGS");
+    kinectROI = xml.getChild("kinectROI").getValue<ofRectangle>();
+    basePlaneNormalBack = xml.getChild("basePlaneNormalBack").getValue<ofVec3f>();
     basePlaneNormal = basePlaneNormalBack;
-    basePlaneOffsetBack = xml.getValue<ofVec3f>("basePlaneOffsetBack");
+    basePlaneOffsetBack = xml.getChild("basePlaneOffsetBack").getValue<ofVec3f>();
     basePlaneOffset = basePlaneOffsetBack;
-    basePlaneEq = xml.getValue<ofVec4f>("basePlaneEq");
-    maxOffsetBack = xml.getValue<float>("maxOffsetBack");
+    basePlaneEq = xml.getChild("basePlaneEq").getValue<ofVec4f>();
+    maxOffsetBack = xml.getChild("maxOffsetBack").getValue<float>();
     maxOffset = maxOffsetBack;
-    spatialFiltering = xml.getValue<bool>("spatialFiltering");
-    followBigChanges = xml.getValue<bool>("followBigChanges");
-    numAveragingSlots = xml.getValue<int>("numAveragingSlots");
-	doInpainting = xml.getValue<bool>("OutlierInpainting", false);
-	doFullFrameFiltering = xml.getValue<bool>("FullFrameFiltering", false);
+    spatialFiltering = xml.getChild("spatialFiltering").getValue<bool>();
+    followBigChanges = xml.getChild("followBigChanges").getValue<bool>();
+    numAveragingSlots = xml.getChild("numAveragingSlots").getValue<int>();
+	doInpainting = xml.getChild("OutlierInpainting").getValue<bool>();
+	doFullFrameFiltering = xml.getChild("FullFrameFiltering").getValue<bool>();
     return true;
 }
 
