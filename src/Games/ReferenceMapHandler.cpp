@@ -123,7 +123,7 @@ bool CReferenceMapHandler::WriteToFile()
 //	XMLOut.setTo("MapReferenceSettings");
     mapRef.appendChild("DefaultMap").set(0);
 
-    auto maps = mapRef.appendChild("maps");=
+    auto maps = mapRef.appendChild("maps");
 
 	for (int i = 0; i < ReferenceMaps.size(); i++)
 	{

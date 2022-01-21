@@ -672,7 +672,7 @@ void KinectProjector::updateROIFromFile()
 	ofXml xml;
 	if (xml.load(settingsFile))
 	{
-        auto kinectSettings = xml.find("KINECTSETTINGS");
+        auto kinectSettings = xml.find("KINECTSETTINGS").getFirst();
 //		xml.setTo("KINECTSETTINGS");
 		kinectROI = kinectSettings.getChild("kinectROI").getValue<ofRectangle>();
 		setNewKinectROI();
@@ -1404,7 +1404,7 @@ void KinectProjector::setupGui(){
 	fpsKinectText = gui->addTextInput("Kinect FPS", "0");
     gui->addBreak();
     
-    auto advancedFolder = gui->addFolder("Advanced", ofColor::purple);
+    auto * advancedFolder = gui->addFolder("Advanced", ofColor::purple);
     advancedFolder->addToggle("Display kinect depth view", drawKinectView)->setName("Draw kinect depth view");
 	advancedFolder->addToggle("Display kinect color view", drawKinectColorView)->setName("Draw kinect color view");
 	advancedFolder->addToggle("Dump Debug", DumpDebugFiles);
@@ -1420,7 +1420,7 @@ void KinectProjector::setupGui(){
 	advancedFolder->addButton("Reset sea level");
 	advancedFolder->addBreak();
 	
-	auto calibrationFolder = gui->addFolder("Calibration", ofColor::darkCyan);
+	auto * calibrationFolder = gui->addFolder("Calibration", ofColor::darkCyan);
 	calibrationFolder->addButton("Manually define sand region");
 	calibrationFolder->addButton("Automatically calibrate kinect & projector");
 	calibrationFolder->addButton("Auto Adjust ROI");
@@ -1857,20 +1857,20 @@ bool KinectProjector::loadSettings(){
     ofXml xml;
     if (!xml.load(settingsFile))
         return false;
-    auto kinectSEttings = xml.find("KINECTSETTINGS");
-    kinectROI = xml.getChild("kinectROI").getValue<ofRectangle>();
-    basePlaneNormalBack = xml.getChild("basePlaneNormalBack").getValue<ofVec3f>();
+    auto kinectSettings = xml.find("KINECTSETTINGS").getFirst();
+    kinectROI = kinectSettings.getChild("kinectROI").getValue<ofRectangle>();
+    basePlaneNormalBack = kinectSettings.getChild("basePlaneNormalBack").getValue<ofVec3f>();
     basePlaneNormal = basePlaneNormalBack;
-    basePlaneOffsetBack = xml.getChild("basePlaneOffsetBack").getValue<ofVec3f>();
+    basePlaneOffsetBack = kinectSettings.getChild("basePlaneOffsetBack").getValue<ofVec3f>();
     basePlaneOffset = basePlaneOffsetBack;
-    basePlaneEq = xml.getChild("basePlaneEq").getValue<ofVec4f>();
-    maxOffsetBack = xml.getChild("maxOffsetBack").getValue<float>();
+    basePlaneEq = kinectSettings.getChild("basePlaneEq").getValue<ofVec4f>();
+    maxOffsetBack = kinectSettings.getChild("maxOffsetBack").getValue<float>();
     maxOffset = maxOffsetBack;
-    spatialFiltering = xml.getChild("spatialFiltering").getValue<bool>();
-    followBigChanges = xml.getChild("followBigChanges").getValue<bool>();
-    numAveragingSlots = xml.getChild("numAveragingSlots").getValue<int>();
-	doInpainting = xml.getChild("OutlierInpainting").getValue<bool>();
-	doFullFrameFiltering = xml.getChild("FullFrameFiltering").getValue<bool>();
+    spatialFiltering = kinectSettings.getChild("spatialFiltering").getValue<bool>();
+    followBigChanges = kinectSettings.getChild("followBigChanges").getValue<bool>();
+    numAveragingSlots = kinectSettings.getChild("numAveragingSlots").getValue<int>();
+	doInpainting = kinectSettings.getChild("OutlierInpainting").getValue<bool>();
+	doFullFrameFiltering = kinectSettings.getChild("FullFrameFiltering").getValue<bool>();
     return true;
 }
 
@@ -1879,19 +1879,17 @@ bool KinectProjector::saveSettings()
     string settingsFile = "settings/kinectProjectorSettings.xml";
 
     ofXml xml;
-    xml.addChild("KINECTSETTINGS");
-    xml.setTo("KINECTSETTINGS");
-    xml.addValue("kinectROI", kinectROI);
-    xml.addValue("basePlaneNormalBack", basePlaneNormalBack);
-    xml.addValue("basePlaneOffsetBack", basePlaneOffsetBack);
-    xml.addValue("basePlaneEq", basePlaneEq);
-    xml.addValue("maxOffsetBack", maxOffsetBack);
-    xml.addValue("spatialFiltering", spatialFiltering);
-    xml.addValue("followBigChanges", followBigChanges);
-    xml.addValue("numAveragingSlots", numAveragingSlots);
-	xml.addValue("OutlierInpainting", doInpainting);
-	xml.addValue("FullFrameFiltering", doFullFrameFiltering);
-	xml.setToParent();
+    auto kinect = xml.appendChild("KINECTSETTINGS");
+    kinect.appendChild("kinectROI").set(kinectROI);
+    kinect.appendChild("basePlaneNormalBack").set(basePlaneNormalBack);
+    kinect.appendChild("basePlaneOffsetBack").set(basePlaneOffsetBack);
+    kinect.appendChild("basePlaneEq").set(basePlaneEq);
+    kinect.appendChild("maxOffsetBack").set(maxOffsetBack);
+    kinect.appendChild("spatialFiltering").set(spatialFiltering);
+    kinect.appendChild("followBigChanges").set(followBigChanges);
+    kinect.appendChild("numAveragingSlots").set(numAveragingSlots);
+    kinect.appendChild("OutlierInpainting").set(doInpainting);
+    kinect.appendChild("FullFrameFiltering").set(doFullFrameFiltering);
     return xml.save(settingsFile);
 }
 
